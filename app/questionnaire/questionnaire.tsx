@@ -54,7 +54,7 @@ export function Questionnaire() {
 
   useEffect(() => {
     // DEV
-    window.Tapcart = {variables: {customer: {id: '123'}}};
+    // window.Tapcart = {variables: {customer: {id: '123'}}};
     const userId = typeof Tapcart !== 'undefined' ? Tapcart?.variables?.customer?.id ?? null : null;
     if (!userId) {
       setError(true);
