@@ -33,13 +33,3 @@ a.pending {
 a.transitioning {
   /* css transition is running */
 }
-
-.back-arrow {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-}
-.back-arrow a {
-  display: block;
-  padding: 5px 10px;
-}
