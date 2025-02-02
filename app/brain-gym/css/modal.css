@@ -1,0 +1,249 @@
+.modal {
+  display: none;
+  z-index: 1;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+
+  background-color: rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s 0s;
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.modal__inner {
+  height: 100%;
+  display: grid;
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+
+  color: white;
+  padding: 1.5rem 1rem;
+  border-radius: 0.5rem;
+  text-align: center;
+}
+.modal__header {
+  font-family: "SF Pro Rounded", sans-serif;
+}
+.modal__header h1 {
+  font-size: 1.5rem;
+  margin: 0;
+  font-weight: bold;
+}
+.modal__content {
+  padding: 10px 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+  align-items: center;
+  overflow-y: scroll;
+}
+.modal__content__spacer {
+  flex: 1;
+}
+.modal__footer {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+.modal__footer button {
+  
+}
+.modal__footer button img {
+  height: 42px;
+  width: 42px;
+}
+
+
+.modal.modal--show {
+  opacity: 1;
+  visibility: visible;
+  display: block;
+}
+
+/* // new game button */
+.start-game-button {
+  padding: 0.8em 1.7em;
+  border-radius: 10px;
+  border: 0;
+
+  font-family: "SF Pro Rounded", sans-serif;
+  font-weight: bold;
+  font-size: 1.4em;
+  color: #fff;
+
+  background: rgb(8, 152, 39);
+
+  cursor: pointer;
+}
+.show-scores-button {
+  border-radius: 10px;
+  background: #888;
+  border: 0;
+  padding: 0 10px;
+}
+
+/* INITIAL moal */
+.modal.initial {
+  z-index: 100;
+  background-color: rgba(67, 34, 125, 1);
+}
+.modal.initial h1 span {
+  display: block;
+  font-size: 2.6em;
+}
+.modal.initial ul {
+  padding: 0 0px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  text-align: left;
+  list-style: none;
+}
+.modal.initial ul li{
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.modal.initial ul li > img{
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+}
+.modal.initial ul li > div{
+  flex: 1;
+}
+
+
+/* WIN & LOSE modals, common styles */
+.modal.complete .score {
+  font-size: 6em;
+  font-weight: bold;
+}
+
+/* WIN modal */
+.modal.complete.win {
+  z-index: 100;
+}
+
+
+/* LOSE modal */
+.modal.complete.lose {
+  z-index: 200;
+}
+.modal.full-scoreboard {
+  z-index: 300;
+}
+
+
+.modal.full-scoreboard {
+}
+.modal.full-scoreboard .modal__title {
+  font-size: 2em;
+}
+
+.modal__close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 24px;
+}
+
+
+.modal.prize {
+  z-index: 400;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(116, 29, 198, 0.7);
+}
+.modal.prize .prize__inner {
+  margin: 0 20px;
+  padding: 0 20px 40px 20px;
+  position: relative;
+  border-radius: 50px;
+  overflow: clip;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #333;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  animation: modal-bounce-in 0.4s ease-in-out;
+}
+.modal.prize .prize__sunburst {
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+}
+.modal.prize .prize__sunburst::before {
+  content: '';
+  position: absolute; 
+  width: 200vh;
+  height: 200vh;
+  top: -50vh;
+  left: calc((100vh - 50vw) * -1);
+  background-image: repeating-conic-gradient(transparent 0 10deg, #fff 10deg 20deg);
+  opacity: 0.1;
+  animation: 40s linear infinite starburst-rotate;
+  filter: blur(8px);
+  /* mix-blend-mode: overlay; */
+}
+.modal.prize .prize__code {
+  padding: 20px;
+  margin: 20px;
+  max-width: 900px;
+  min-width: 300px;
+  border-radius: 20px;
+  text-align: center;
+  font-family: "SF Pro Rounded", sans-serif;
+  font-weight: bold;
+  font-size: 1.3em;
+  background: white;
+  color:  green;
+
+}
+.modal.prize .prize__header {
+  text-align: center;
+  font-family: "SF Pro Rounded", sans-serif;
+  
+}
+.modal.prize .prize__content {
+  text-align: center;
+  font-weight: bold;
+}
+
+@keyframes starburst-rotate {
+  to {
+    rotate: 1turn;
+  }
+}
+
+
+@keyframes modal-bounce-in {
+  from {
+    scale: 0.2;
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  70% {
+    scale: 1.1;
+  }
+  to {
+    scale: 1;
+  }
+}

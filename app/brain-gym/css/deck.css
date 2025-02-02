@@ -1,0 +1,284 @@
+.table {
+  flex: 1;
+  max-height: 100%;
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  transition: background-color 0.1s;
+  background-color: rgba(67, 34, 125, 1);
+
+}
+
+.deck {
+  max-height: 100%;
+  max-width: 100%;
+  padding: 0 10px;
+
+  margin: auto;
+  height: min-content;
+  width: min-content;
+
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 15px;
+  
+  /* background: linear-gradient(135deg, rgba(107, 197, 229, 1) 0%, rgba(63, 154, 204, 1) 36%, rgba(29, 71, 169, 1) 100%); */
+  margin: 0;
+
+  align-items: center;
+}
+
+.deck--6 {
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+}
+.deck--6 .card{
+  min-width: 130px;
+}
+
+.deck--12 {
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+}
+.deck--12 .card{
+  min-width: 100px;
+}
+
+.deck--16 {
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+}
+.deck--16 .card{
+  min-width: 70px;
+}
+
+.deck--20 {
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+}
+.deck--20 .card{
+  min-width: 70px;
+}
+
+.card {
+  perspective: 1000px;
+  width: max-content;
+  height: max-content;
+  min-width: 100px;
+  min-height: 100px;
+  aspect-ratio: 3 / 4;
+  cursor: pointer;
+
+  transition: opacity 0.5s;
+}
+
+.card .card__inner {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s;
+  transform-style: preserve-3d;
+
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.4);
+}
+.card .card__back, .card .card__face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+
+  border-radius: 8px;
+  overflow: clip;
+
+  backface-visibility: hidden;
+  --webkit-backface-visibility: hidden;
+}
+.card .card__back {
+  transform: rotateY(0deg);
+  background: 
+  linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.2) 100%),
+  url(/nmn-logo.svg) center center / contain no-repeat,
+  white;
+  /* repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 2px,
+    #eee 4px,
+    #eee 6px
+  ),
+  repeating-linear-gradient(
+    45deg,
+    #fff,
+    #fff 2px,
+    #eee 4px,
+    #eee 6px
+  ); */
+}
+.card .card__face {
+  transform: rotateY(180deg);
+  background:   linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.1) 100%),
+  white;
+}
+.card .card__face img {
+  
+}
+.card.show .card__inner {
+  transform: rotateY(180deg);
+  cursor: default;
+}
+.card.show .card__face {
+
+}
+
+.card.hide {
+  opacity: 0;
+}
+
+
+.card.match .card__inner {
+  transform: rotateY(180deg) scale(1);
+}
+
+.card.no-match .card__inner .card__face {
+  background: rgb(200, 38, 38);
+  transition: 0.1s;
+}
+
+.table.match {
+
+}
+.table.no-match {
+  background-color: rgb(200, 38, 38);
+}
+
+
+
+@keyframes round {
+  0% {
+    transform: scale(50%);
+    opacity: 0;
+  }
+  30% {
+    transform: scale(100%);
+    opacity: 1;
+  }
+  70% {
+    transform: scale(100%);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(200%);
+    opacity: 0;
+  }
+}
+@keyframes round-bg {
+  0% {
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+  70% {
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+  100% {
+    background-color: rgba(0, 0, 0, 0);
+  }
+}
+@keyframes countdown {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+.round-animation {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0);
+  transition: background-color 0.25s;
+}
+.round-animation .round-animation__inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 50px;
+  border-radius: 50%;
+  font-family: "SF Pro Rounded", sans-serif;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.6);
+  aspect-ratio: 1/1;
+}
+.round-animation .round-animation__inner h1 {
+  font-size: 3rem;
+}
+.round-animation.round--show {
+  display: flex;
+  animation: round-bg 6s ease-in-out;
+}
+.round-animation.round--show .round-animation__inner {
+  animation: round 2s ease-in-out forwards;
+}
+
+.round-countdown {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+.round-countdown__number {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+   
+  opacity: 0;
+  transform: scale(0);
+  font-size: 6rem;
+  font-weight: bold;
+  color: white;
+}
+.round-animation.round--show .round-countdown__number {
+  animation: countdown 1s;
+}
+.round-animation.round--show .round-countdown__number:nth-child(1) {
+  animation: countdown 1s;
+  animation-delay: 2s;
+}
+.round-animation.round--show .round-countdown__number:nth-child(2) {
+  animation: countdown 1s;
+  animation-delay: 3s;
+}
+.round-animation.round--show .round-countdown__number:nth-child(3) {
+  animation: countdown 1s;
+  animation-delay: 4s;
+}
