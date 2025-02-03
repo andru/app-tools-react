@@ -1,4 +1,4 @@
-import { defaultState, newGame } from './default-state';
+import { defaultState, dummyGames, newGame, prizes } from './default-state';
 import { cardIcons } from './game';
 import { calculateGameScore, dealDeck, gameResult } from './game-logic';
 import type { Card, Game, GameResult, GameState, ParsedState, Prize, Round, State } from './types';
@@ -23,10 +23,14 @@ export type Action =
   | {type: 'CLOSE_SCORES_MODAL'}
   | {type: 'START_ROUND_COUNTDOWN'}
   | {type: 'ROUND_COUNTDOWN_COMPLETE'}
-  | {type: 'SKIP_ROUND'};
+  | {type: 'SKIP_ROUND'}
+  | {type: 'CHEAT_WIN'}
+  | {type: 'CHEAT_PRIZE'}
+  | {type: 'CHEAT_LOSE'}
+  | {type: 'DEV_DEMO'};
 
 export const reducer = (state: State, action: Action): State => {
-  console.info('action', action, state);
+  console.info(action, state);
   const nextState = {...state};
   const nextGame = {...state.currentGame};
   switch (action.type) {
@@ -36,7 +40,7 @@ export const reducer = (state: State, action: Action): State => {
       // emergency exit hatch for error states
       return { ...defaultState };
     case 'LOAD_STATE':
-      return { ...state, ...action.payload, isInitialized: true };
+      return { ...state, ...action.payload, isInitialized: true, devMode: process.env.NODE_ENV === 'development' };
     case 'SAVE_STATE':
         const saveState = async () => {
           const stringState = JSON.stringify({
@@ -53,6 +57,15 @@ export const reducer = (state: State, action: Action): State => {
 
       return { ...state, ...action.payload };
     case 'RESTART':
+      return { 
+        ...state, 
+        currentGame: {...newGame},
+        showModal: 'initial',
+        showStatusBar: false,
+        showRoundCountdown: false,
+        showPrizeModal: false,
+        showScoresModal: false
+       };
     case 'START_GAME':
       return { 
         ...state, 
@@ -71,7 +84,11 @@ export const reducer = (state: State, action: Action): State => {
     case 'START_ROUND_COUNTDOWN':
       return { ...state, showRoundCountdown: true };
     case 'ROUND_COUNTDOWN_COMPLETE':
-      return { ...state, showRoundCountdown: false, currentGame: { ...nextGame, roundStartTime: new Date() }};
+      return { 
+        ...nextState,
+        showRoundCountdown: false,
+        currentGame: { ...nextGame, roundStartTime: new Date() }
+      };
     case 'CARD_CLICK':
       nextGame.clicks.push(action.payload);
       if (nextGame.currentTry.every((i) => i !== null)) {
@@ -159,6 +176,11 @@ export const reducer = (state: State, action: Action): State => {
           }
         }
 
+        if (result.prizeWon) {
+          nextState.showPrizeModal = true;
+          nextState.prizesWon = [...state.prizesWon, [result.prizeWon.id, new Date()]];
+        }
+
       } else {
         // new round
         // this state should all be moved into a currentRound object to make this easier
@@ -194,6 +216,14 @@ export const reducer = (state: State, action: Action): State => {
       return { ...state, showPrizeModal: true };
     case 'CLOSE_PRIZE_MODAL':
       return { ...state, showPrizeModal: false };
+    case 'DEV_DEMO':
+      return { ...state, scores: [...dummyGames]};
+    case 'CHEAT_WIN':
+      return { ...state, scores: [...dummyGames], lastGameResult: { score: 999, isHighScore: true, averageScore: 100, numMoves: 20, totalTime: 20, percentImprovement: 99 }, showModal: 'endgame', showStatusBar: false };
+    case 'CHEAT_PRIZE':
+      return { ...state, scores: [...dummyGames], prizesWon: [[prizes[0].id, new Date()]], lastGameResult: { score: 999, isHighScore: true, averageScore: 100, numMoves: 20, totalTime: 20, percentImprovement: 99, prizeWon: prizes[0] }, showModal: 'endgame', showPrizeModal: true, showStatusBar: false };
+    case 'CHEAT_LOSE':
+      return { ...state, scores: [...dummyGames], lastGameResult: { score: 10, isHighScore: false, averageScore: 100, numMoves: 200, totalTime: 200, percentImprovement: 0 }, showModal: 'endgame', showStatusBar: false };
     default:
       return state;
   }

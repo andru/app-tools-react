@@ -88,3 +88,12 @@
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
 }
+
+.scoreboard-prizes {
+  padding-top: 20px;
+}
+.scoreboard-prizes h2 {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 10px;
+}

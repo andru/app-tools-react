@@ -5,17 +5,16 @@ export default function RoundCountdown () {
   const state = useAppState();
   const dispatch = useAppDispatch();
 
-  const isVisible = state.showRoundCountdown;
   useEffect(() => {
-    if (isVisible) {
+    if (state.showRoundCountdown) {
       setTimeout(() => {
         dispatch({type: "ROUND_COUNTDOWN_COMPLETE"})
       }, 5000);
     }
-  }, [isVisible]);
+  }, [state.showRoundCountdown]);
 
   return (
-    <div className={`round-animation ${isVisible ? "round--show" : ""}`}>
+    <div className={`round-animation ${state.showRoundCountdown ? "round--show" : ""}`}>
       <div className="round-animation__inner">
         <h1>Round <span>{state.currentGame.currentRound}</span></h1>
         3 seconds to memorise!

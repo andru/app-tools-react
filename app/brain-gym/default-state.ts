@@ -21,7 +21,7 @@ export const newGame: GameState = {
 
 export const defaultState: State = {
   version: 1,
-  isInitialized: true,
+  isInitialized: false,
   currentGame: { ...newGame },
   scores: [],
   prizesWon: [],
@@ -30,6 +30,7 @@ export const defaultState: State = {
   showScoresModal: false,
   showStatusBar: false,
   showRoundCountdown: false,
+  devMode: false,
 };
 
 

@@ -53,28 +53,6 @@ export const cardIcons: Card[] = [
   'treadmill',
 ]
 
-// DEMO MODE
-if (typeof window !== 'undefined') {
-  if (window.location.search === '?demo') {
-    localStorage.setItem('cardgame', JSON.stringify( {
-      version: 2,
-      scores: dummyGames,
-      prizesWon: [],
-    }));
-    window.addEventListener('DOMContentLoaded', function () {
-      this.setTimeout(function() { alert(`DEMO MODE - loading fake score history`);
-      }, 100);
-    });
-    window.location.search = '';
-  }
-
-  if (window.location.search === '?clear') {
-    localStorage.removeItem('cardgame');
-    window.location.search = '';
-  }
-}
-
-
 
 export function MemoryTrainer() { 
 
@@ -102,16 +80,15 @@ export function MemoryTrainer() {
   }, [])
 
   const [roundTime, setRoundTime] = useState<number>(0);
-  const roundStartTime = state.currentGame.roundStartTime;
 
   const tick = useCallback(() => {
-    if (state.isInitialized && roundStartTime && !state.currentGame.isFinished) {
-      const secondsElapsed = Math.floor((Date.now() - roundStartTime.getTime()) / 1000)
+    if (state.currentGame.roundStartTime) {
+      const secondsElapsed = Math.floor((Date.now() - state.currentGame.roundStartTime.getTime()) / 1000)
       setRoundTime(secondsElapsed)
     } else {
       setRoundTime(0);
     }
-  }, [state.currentGame.currentRound, roundStartTime]);
+  }, [state.isInitialized, state.currentGame.currentRound, state.currentGame.roundStartTime, setRoundTime]);
 
 
   const timer = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -120,7 +97,7 @@ export function MemoryTrainer() {
     return () => {
       if (timer.current) clearInterval(timer.current);
     }
-  }, [state.currentGame.currentRound]);
+  }, [state.isInitialized, state.currentGame.currentRound, state.currentGame.roundStartTime]);
 
   useEffect(() => {
     const [a, b] = state.currentGame.currentTry;
@@ -148,9 +125,9 @@ export function MemoryTrainer() {
     <div className="container">
       <section className={`status-bar ${isStatusBarVisible ? 'status-bar--show' : ''}`}>
         <div className="round">Round no. <span>{state?.currentGame.currentRound}</span></div>
-        <span className="moves">{state.currentGame.movesCounter}</span>
+        <span className="moves">Moves: {state.currentGame.movesCounter}</span>
         <span className="timer">{roundTime}s</span>
-        <div className="restart">
+        <div className="restart" onClick={() => dispatch({type: 'RESTART'})}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24px" 
@@ -178,19 +155,8 @@ export function MemoryTrainer() {
       : null}
       {state.showScoresModal ? <ScoreboardModal onClose={() => dispatch({type: 'CLOSE_SCORES_MODAL'})} /> : null}
       {state.showPrizeModal ? <PrizeModal onClose={() => dispatch({type: 'CLOSE_PRIZE_MODAL'})} /> : null}
+      {state.isInitialized ? null : <div>Loading...</div>}
       <Deck />
-
-      <div className="round-animation">
-        <div className="round-animation__inner">
-          <h1>Round <span>{state?.currentGame.currentRound}</span></h1>
-          3 seconds to memorise!
-        </div>
-        <div className="round-countdown">
-          <div className="round-countdown__number">3</div>
-          <div className="round-countdown__number">2</div>
-          <div className="round-countdown__number">1</div>
-        </div>
-      </div>
     </div>
   );
 }

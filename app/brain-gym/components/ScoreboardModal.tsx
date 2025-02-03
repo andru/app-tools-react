@@ -1,3 +1,4 @@
+import { prizes } from '../default-state';
 import { useAppDispatch, useAppState } from '../state-provider';
 import Scoreboard from './scoreboard';
 
@@ -19,6 +20,14 @@ export const ScoreboardModal = ({onClose}: Props) => {
         <div className="modal__content">
           <div className="scoreboard-container">
             <Scoreboard games={scores} />
+          </div>
+          <div className="scoreboard-prizes">
+            <h2>Prizes You've Won</h2>
+            {state.prizesWon.map(([id, date], i) => {
+              const prize = prizes.find(prize => prize.id === id)
+              return prize ? (<div><b>{prize?.code}</b><br />{prize?.text}</div>) : null;
+            })}
+            {state.prizesWon.length === 0 && <div>You've not won any prizes yet - keep playing to win!</div>}
           </div>
         </div>
       </div>

@@ -18,7 +18,6 @@ const Scoreboard: React.FC<{ games: Game[] }> = ({ games }) => {
 
     const scores = games.map(calculateGameScore);
     const chartYScale = scale([Math.min(...scores), Math.max(...scores)], [chartHeight - 5, 5]);
-    console.log(scores, scores.map(chartYScale));
 
     const points = games.map((game, index) => {
       const x = (index / (games.length - 1)) * chartWidth;

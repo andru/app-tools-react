@@ -1,9 +1,13 @@
+import { useAppDispatch, useAppState } from "../state-provider";
+
 interface InitialModalProps {
   onShowScores: () => void;
   onStartGame: () => void;
 }
 
 export const InitialModal: React.FC<InitialModalProps> = ({ onShowScores, onStartGame }) => {
+  const state = useAppState();
+  const dispatch = useAppDispatch();
   return (
     <div className="modal initial modal--show">
       <div className="back-arrow"><a href="/">
@@ -37,6 +41,12 @@ export const InitialModal: React.FC<InitialModalProps> = ({ onShowScores, onStar
               <img src="/icons/prize-icon.png" />
             </li>
           </ul>
+
+          {state.devMode ? <div>
+        <span onClick={() => dispatch({type: 'CHEAT_WIN'})}>win</span>
+         | <span onClick={() => dispatch({type: 'CHEAT_LOSE'})}>lose</span>
+          | <span onClick={() => dispatch({type: 'CHEAT_PRIZE'})}>winprize</span>
+           | <span onClick={() => dispatch({type: 'DEV_DEMO'})}>demo data</span></div> : null}
         </div>
         <div className="modal__footer">
           <button className="show-scores-button" onClick={onShowScores}><img src="/icons/scores-icon.png" /></button>

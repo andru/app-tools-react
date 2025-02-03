@@ -52,11 +52,21 @@ export type State = {
   showScoresModal: boolean,
   showStatusBar: boolean,
   showRoundCountdown: boolean,
+  devMode: boolean,
 }
 export type PersistedState = {
   version: number;
   scores: Game[];
   prizesWon: [string, string][];
+}
+export type FirebasePersistedState = {
+  userId: string;
+  version: number;
+  scores: {
+    rounds: Round[];
+    date: number;
+  }[];
+  prizesWon: {id: string, date: number}[];
 }
 // JSON.parse of local storage string
 export type ParsedState = {
