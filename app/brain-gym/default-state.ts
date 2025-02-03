@@ -20,7 +20,7 @@ export const newGame: GameState = {
 };
 
 export const defaultState: State = {
-  version: 1,
+  version: 3,
   isInitialized: false,
   currentGame: { ...newGame },
   scores: [],

@@ -42,15 +42,23 @@ export const InitialModal: React.FC<InitialModalProps> = ({ onShowScores, onStar
             </li>
           </ul>
 
-          {state.devMode ? <div>
+          {state.devMode ? <div className="mt-4 p-2 rounded-full flex gap-4 bg-white text-purple-500">Dev:
         <span onClick={() => dispatch({type: 'CHEAT_WIN'})}>win</span>
-         | <span onClick={() => dispatch({type: 'CHEAT_LOSE'})}>lose</span>
-          | <span onClick={() => dispatch({type: 'CHEAT_PRIZE'})}>winprize</span>
-           | <span onClick={() => dispatch({type: 'DEV_DEMO'})}>demo data</span></div> : null}
+         <span onClick={() => dispatch({type: 'CHEAT_LOSE'})}>lose</span>
+          <span onClick={() => dispatch({type: 'CHEAT_PRIZE'})}>winprize</span>
+           <span onClick={() => dispatch({type: 'DEV_DEMO'})}>demo</span></div> : null}
         </div>
         <div className="modal__footer">
-          <button className="show-scores-button" onClick={onShowScores}><img src="/icons/scores-icon.png" /></button>
-          <button className="start-game-button new-game" onClick={onStartGame}>Start the game</button>
+        {state.isInitialized 
+          ? <>
+            <button className="show-scores-button" onClick={onShowScores}><img src="/icons/scores-icon.png" /></button>
+            <button className="start-game-button new-game" onClick={onStartGame}>Start the game</button>
+          </> 
+          : (
+            <div className="flex items-center justify-center animate-pulse">
+              Loading... 
+            </div>
+          )}
         </div>
       </div>
     </div>

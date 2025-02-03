@@ -23,11 +23,12 @@ export type Action =
   | {type: 'CLOSE_SCORES_MODAL'}
   | {type: 'START_ROUND_COUNTDOWN'}
   | {type: 'ROUND_COUNTDOWN_COMPLETE'}
+  | {type: 'DEV_MODE'}
   | {type: 'SKIP_ROUND'}
   | {type: 'CHEAT_WIN'}
   | {type: 'CHEAT_PRIZE'}
   | {type: 'CHEAT_LOSE'}
-  | {type: 'DEV_DEMO'};
+  | {type: 'DEV_DEMO'}
 
 export const reducer = (state: State, action: Action): State => {
   console.info(action, state);
@@ -40,7 +41,7 @@ export const reducer = (state: State, action: Action): State => {
       // emergency exit hatch for error states
       return { ...defaultState };
     case 'LOAD_STATE':
-      return { ...state, ...action.payload, isInitialized: true, devMode: process.env.NODE_ENV === 'development' };
+      return { ...state, ...action.payload, isInitialized: true };
     case 'SAVE_STATE':
         const saveState = async () => {
           const stringState = JSON.stringify({
@@ -216,6 +217,8 @@ export const reducer = (state: State, action: Action): State => {
       return { ...state, showPrizeModal: true };
     case 'CLOSE_PRIZE_MODAL':
       return { ...state, showPrizeModal: false };
+    case 'DEV_MODE':
+      return { ...state, devMode: true };
     case 'DEV_DEMO':
       return { ...state, scores: [...dummyGames]};
     case 'CHEAT_WIN':

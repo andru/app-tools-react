@@ -69,7 +69,7 @@ export function MemoryTrainer() {
         if (spaceKeys > 4) {
           // make it look like we've completed this level with a practically perfect score
           spaceKeys = 0;
-          dispatch({type: 'SKIP_ROUND'});
+          dispatch({type: 'DEV_MODE'});
         }
       }
     }
@@ -155,7 +155,6 @@ export function MemoryTrainer() {
       : null}
       {state.showScoresModal ? <ScoreboardModal onClose={() => dispatch({type: 'CLOSE_SCORES_MODAL'})} /> : null}
       {state.showPrizeModal ? <PrizeModal onClose={() => dispatch({type: 'CLOSE_PRIZE_MODAL'})} /> : null}
-      {state.isInitialized ? null : <div>Loading...</div>}
       <Deck />
     </div>
   );

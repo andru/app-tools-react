@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, useEffect } from 'react';
+import { createContext, useContext, useReducer, useEffect, useRef } from 'react';
 import type { Card, FirebasePersistedState, Game, GameResult, GameState, ParsedState, Prize, Round, State } from './types';
 import { cardIcons } from './game';
 import { defaultState, prizes } from './default-state';
@@ -44,16 +44,17 @@ export const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) 
   }, [state.isInitialized]);
 
   useEffect(() => {
-    if (state.isInitialized) {
+    // cheking for lastGameResult ensures we only save to state after a game has finished
+    if (state.isInitialized && state.lastGameResult) {
       saveToServer(state);
-      saveToLocalStorage(state);
     }
-  }, [state.isInitialized, state.scores])
+    
+  }, [state.isInitialized, state.lastGameResult])
 
   return (
     <StateContext.Provider value={state}>
       <DispatchContext.Provider value={dispatch}>
-        {state.isInitialized ? children : null}
+        {children}
       </DispatchContext.Provider>
     </StateContext.Provider>
   );
@@ -78,7 +79,6 @@ function getUserId (): string | null {
 
 
 export async function saveToServer (state: State) {
-  console.log('saving to server');
   const userId = getUserId();
   if (!userId) {
     console.error('No user id found');

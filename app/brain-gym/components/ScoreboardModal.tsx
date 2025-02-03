@@ -25,7 +25,7 @@ export const ScoreboardModal = ({onClose}: Props) => {
             <h2>Prizes You've Won</h2>
             {state.prizesWon.map(([id, date], i) => {
               const prize = prizes.find(prize => prize.id === id)
-              return prize ? (<div><b>{prize?.code}</b><br />{prize?.text}</div>) : null;
+              return prize ? (<div key={id}><b>{prize?.code}</b><br />{prize?.text}</div>) : null;
             })}
             {state.prizesWon.length === 0 && <div>You've not won any prizes yet - keep playing to win!</div>}
           </div>
