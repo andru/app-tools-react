@@ -4,6 +4,11 @@ import { StartModal } from './start-modal';
 import { useState, useEffect } from 'react';
 import { ProgressCircle } from './progress-circle';
 
+type State = {
+  startDate?: string;
+  targetDate?: string;
+}
+
 export function FastingTracker () {
 
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -22,7 +27,7 @@ export function FastingTracker () {
     }
   }, []);
 
-  const saveState = (state) => {
+  const saveState = (state: State) => {
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem("fasting-tracker", JSON.stringify(state));
     }

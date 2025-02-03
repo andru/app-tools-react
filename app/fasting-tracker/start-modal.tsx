@@ -44,7 +44,7 @@ export const StartModal: React.FC<TimeModalProps> = ({ isOpen, onClose, onStart 
             <div className="mt-5">
               <label htmlFor="countupType">End Fasting Time:</label>
               <div className="flex gap-2.5">
-                <input type="datetime-local" className="inline-block w-full p-2.5 bg-gray-200 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" id="countupTime" onChange={handleSetTargetDate} value={targetDate.toISOString().slice(0,16)} />
+                <input type="datetime-local" className="inline-block w-full p-2.5 bg-gray-200 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" id="countupTime" onChange={handleSetTargetDate} value={targetDate?.toISOString().slice(0,16)} />
               </div>
               <div id="countupTimeError" className="text-red-500 text-sm mt-1">
                 {countupTimeError}
