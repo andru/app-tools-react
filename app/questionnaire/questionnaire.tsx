@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router";
+import { firebaseFunctionsUrl } from "~/constants";
 
 declare global {
   var Tapcart: any;
@@ -30,8 +31,8 @@ async function timeout(ms: number) {
 }
 
 export function Questionnaire() {
-  const fetchUrl = "https://us-central1-nmnbio-app-108c5.cloudfunctions.net/getUserQuestionnaire";
-  const saveUrl = "https://us-central1-nmnbio-app-108c5.cloudfunctions.net/saveUserQuestionnaire";
+  const fetchUrl = `${firebaseFunctionsUrl}/getUserQuestionnaire`;
+  const saveUrl = `${firebaseFunctionsUrl}/saveUserQuestionnaire`;
   const [userId, setUserId] = useState<number>(0);
   const [allRecords, setAllRecords] = useState<Record[]>([]);
   const [currentRecord, setCurrentRecord] = useState<Record | null>(null);
@@ -199,7 +200,7 @@ export function Questionnaire() {
         ))}
         <input type="submit" className="submit-btn bg-purple-800 border-none text-white uppercase py-2.5 px-5 rounded cursor-pointer font-semibold w-full hover:bg-orange-500 disabled:bg-gray-300" disabled={isLoading} value="submit" />
       </form>
-      {popupVisible && <div id="popup" className="popup fixed top-2.5 left-2.5 right-2.5   p-5 bg-gray-200 font-semibold border border-gray-300 rounded shadow-lg z-50 text-center">{popupMessage}</div>}
+      {popupVisible && <div id="popup" className="popup fixed top-12 left-2.5 right-2.5   p-5 bg-gray-200 font-semibold border border-gray-300 rounded shadow-lg z-50 text-center">{popupMessage}</div>}
     </div>
   );
 }

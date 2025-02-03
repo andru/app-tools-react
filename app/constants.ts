@@ -1,0 +1,1 @@
+export const firebaseFunctionsUrl = 'https://us-central1-nmnbio-app-108c5.cloudfunctions.net';
