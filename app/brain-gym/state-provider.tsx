@@ -65,10 +65,12 @@ declare const Tapcart: any;
 function getTapCart() {
     return typeof Tapcart !== 'undefined' ? Tapcart : null;
 }
-function getUserId (): string | null {
+export function getUserId (): string | null {
   const tc = getTapCart();
   if (tc && tc.isInitialized) {
     return  Tapcart?.variables?.customer?.id ?? 0;
+  } else {
+    throw new Error('Tapcart not initialized');
   }
   
   if (process.env.NODE_ENV === 'development') {

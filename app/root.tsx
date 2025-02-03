@@ -29,6 +29,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        {/* we're having to use this, because the react package doesn't work with React 19 */}
+        <script src="https://cdn.tapcart.com/webbridge-sdk/webbridge.umd.js" defer></script>
         <Meta />
         <Links />
       </head>
