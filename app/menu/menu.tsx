@@ -2,7 +2,7 @@ import { NavLink } from 'react-router';
 
 export function Menu() {
   return (
-    <main className="flex items-center justify-center pt-16 pb-4 bg-gray-200">
+    <main className="h-full flex pt-4 pb-4 bg-gray-200">
       <ul className="list-none p-5 w-full">
         <li className="bg-white p-2 mb-2">
           <NavLink to="brain-gym/" className="flex border-2 border-purple-700/50 p-5 text-xl text-purple-700 no-underline">
