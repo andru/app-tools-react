@@ -1,1 +1,1 @@
-export const firebaseFunctionsUrl = 'https://us-central1-nmnbio-app-108c5.cloudfunctions.net';
+export const firebaseFunctionsUrl = 'https://europe-west1-tapcart-app-40a3e.cloudfunctions.net';
