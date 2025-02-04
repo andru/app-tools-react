@@ -4,6 +4,8 @@ import { calculateGameScore, dealDeck, gameResult } from './game-logic';
 import type { Card, Game, GameResult, GameState, ParsedState, Prize, Round, State } from './types';
 
 export type Action = 
+  | {type: 'UNAUTHENTICATED'}
+  | {type: 'AUTHENTICATED', payload: {userId: string}}
   | {type: 'INITIALIZED'} 
   | {type: 'RESET'}
   | {type: 'LOAD_STATE', payload: State} 
@@ -35,6 +37,10 @@ export const reducer = (state: State, action: Action): State => {
   const nextState = {...state};
   const nextGame = {...state.currentGame};
   switch (action.type) {
+    case 'UNAUTHENTICATED':
+      return { ...state, userId: null, isAuthed: false };
+    case 'AUTHENTICATED':
+      return { ...state, userId: action.payload.userId, isAuthed: true };
     case 'INITIALIZED':
       return { ...state, isInitialized: true };
     case 'RESET':

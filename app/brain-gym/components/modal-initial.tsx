@@ -54,11 +54,16 @@ export const InitialModal: React.FC<InitialModalProps> = ({ onShowScores, onStar
             <button className="show-scores-button" onClick={onShowScores}><img src="/icons/scores-icon.png" /></button>
             <button className="start-game-button new-game" onClick={onStartGame}>Start the game</button>
           </> 
+          : state.isAuthed === false 
+          ? (<div onClick={() => dispatch({type: "RESET"})} className="bg-red-500 text-white p-2 rounded-md cursor-pointer">
+              Loading failed. Click to retry...
+            </div>)
           : (
             <div className="flex items-center justify-center animate-pulse">
               Loading... 
             </div>
           )}
+
         </div>
       </div>
     </div>

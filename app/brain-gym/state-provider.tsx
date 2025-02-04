@@ -4,6 +4,7 @@ import { cardIcons } from './game';
 import { defaultState, prizes } from './default-state';
 import { reducer, type Action } from './reducer';
 import { firebaseFunctionsUrl } from '~/constants';
+import type { R } from 'node_modules/vite/dist/node/types.d-aGj9QkWt';
 
 
 const StateContext = createContext<State>(defaultState);
@@ -21,27 +22,59 @@ export const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) 
   const [state, dispatch] = useReducer(reducer, defaultState);
 
   useEffect(() => {
-    if (!state.isInitialized) {
-      loadFromLocalStorage().then((parsedState) => {
-        if (parsedState) {
-          // save to server
-          saveToServer(parsedState).then((res) => {
-            localStorage.removeItem('cardgame');
-          }).catch((err) => {
-            console.error('Failed to save to server');
+    let timeout: ReturnType<typeof setTimeout> | undefined; 
+    function initialize() {
+      if (!state.isInitialized && state.isAuthed===null) {
+        try {
+          const userId = getUserId();
+          if (userId) {
+            dispatch({ type: 'AUTHENTICATED', payload: {userId} });
+          }
+        } catch (err) {
+          // tapcart not initialized or user not logged in
+          const tc = getTapCart();
+          if (tc && tc.isInitialized) {
+            // open login
+            tc.action("authentication/open", {});
+            dispatch({type: 'UNAUTHENTICATED'});
+            return;
+          } else {
+            // tapcart not initialized
+            // try again in 1 second
+            dispatch({type: 'UNAUTHENTICATED'});
+            timeout = setTimeout(initialize, 1000);
+            return;
+          }
+
+            // dispatch({"type": "UNAUTHENTICATED"});
+        } 
+        if (state.userId) {
+          loadFromLocalStorage().then((parsedState) => {
+            if (parsedState) {
+              // save to server
+              saveToServer(parsedState).then((res) => {
+                localStorage.removeItem('cardgame');
+              }).catch((err) => {
+                console.error('Failed to save to server');
+              });
+              dispatch({ type: 'LOAD_STATE', payload: parsedState });
+            } else {
+              loadFromServer().then((firebaseState) => {
+                dispatch({ type: 'LOAD_STATE', payload: {...defaultState, ...firebaseState} });
+              }).catch((err) => {
+                console.error('Failed to load from server');
+              })
+            }
+            
           });
-          dispatch({ type: 'LOAD_STATE', payload: parsedState });
-        } else {
-          loadFromServer().then((firebaseState) => {
-            dispatch({ type: 'LOAD_STATE', payload: {...defaultState, ...firebaseState} });
-          }).catch((err) => {
-            console.error('Failed to load from server');
-          })
         }
-        
-      });
+      }
     }
-  }, [state.isInitialized]);
+    initialize();
+    return () => {
+      clearTimeout(timeout);
+    }
+  }, [state.userId, state.isAuthed]);
 
   useEffect(() => {
     // cheking for lastGameResult ensures we only save to state after a game has finished
@@ -72,11 +105,6 @@ export function getUserId (): string | null {
   } else {
     throw new Error('Tapcart not initialized');
   }
-  
-  if (process.env.NODE_ENV === 'development') {
-    return "123";
-  }
-  return null;
 }
 
 

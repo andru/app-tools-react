@@ -21,6 +21,8 @@ export const newGame: GameState = {
 
 export const defaultState: State = {
   version: 3,
+  isAuthed: null,
+  userId: null,
   isInitialized: false,
   currentGame: { ...newGame },
   scores: [],

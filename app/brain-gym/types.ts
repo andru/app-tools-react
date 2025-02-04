@@ -44,6 +44,8 @@ export type State = {
   scores: Game[];
   prizesWon: [string, Date][];
 
+  userId: string | null;
+  isAuthed: boolean | null;
   isInitialized: boolean,
   currentGame: GameState;
   lastGameResult?: GameResult;
