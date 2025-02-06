@@ -1,5 +1,3 @@
-"use client"
-
 import './css/main.css';
 import './css/deck.css';
 import './css/modal.css';
