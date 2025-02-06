@@ -9,6 +9,10 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import { useEffect } from "react";
+
+import { loadWebbridge, WebbridgeProvider } from '~/webbridge-react/dist/webbridge-react.es'
+const webbridgeClient = loadWebbridge({ test: false })
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -30,12 +34,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* we're having to use this, because the react package doesn't work with React 19 */}
-        <script src="https://cdn.tapcart.com/webbridge-sdk/webbridge.umd.js"></script>
+        {/* <script src="https://cdn.tapcart.com/webbridge-sdk/webbridge.umd.js" defer></script> */}
         <Meta />
         <Links />
       </head>
       <body>
-        {children}
+        <WebbridgeProvider webbridgeClient={webbridgeClient}>{children}</WebbridgeProvider>
         <ScrollRestoration />
         <Scripts />
       </body>
