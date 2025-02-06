@@ -11,6 +11,11 @@ export function Menu() {
       const tc = Tapcart;
       if (!tc.isInitialized) {
         setUserError('Failed to load user data. (TC-NI)');
+        setTimeout(() => {
+          if (tc.isInitialized) {
+            setUserError('Failed to load user data. (TC-IL)');
+          }
+        }, 1000);
       } else {
         if (!tc.variables?.customer?.id) {
           setUserError('Failed to load user data. (TC-UNF)');
