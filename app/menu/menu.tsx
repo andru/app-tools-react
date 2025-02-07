@@ -22,19 +22,19 @@ export function Menu() {
           if (!tc.variables?.customer?.id) {
             setUserError('Failed to load user data. (TC-USER-NF)');
           } else {
-            setUserError(`Error (TC-INIT-SI) ${tc.variables?.customer?.id}`);
+            setUserError(null);
           }
         }
       }
     }, 1000);
 
-    const tcListener = () => {
-      setUserError(`TC Initialized: [${Tapcart.variables?.customer?.id}]`);
-    };
-    window.addEventListener("webbridge-loaded", tcListener);
+    // const tcListener = () => {
+    //   setUserError(`TC Initialized: [${Tapcart.variables?.customer?.id}]`);
+    // };
+    // window.addEventListener("webbridge-loaded", tcListener);
 
     return () => {
-      window.removeEventListener("webbridge-loaded", tcListener);
+      // window.removeEventListener("webbridge-loaded", tcListener);
       window.clearInterval(tcInterval);
     }
 
