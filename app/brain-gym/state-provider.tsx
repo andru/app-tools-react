@@ -35,41 +35,47 @@ export const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) 
           const tc = getTapCart();
           if (tc && tc.isInitialized) {
             // open login
-            tc.action("authentication/open", {});
             dispatch({type: 'UNAUTHENTICATED'});
             return;
           } else {
             // tapcart not initialized
             // try again in 1 second
-            dispatch({type: 'UNAUTHENTICATED'});
+            // dispatch({type: 'UNAUTHENTICATED'});
             timeout = setTimeout(initialize, 1000);
             return;
           }
 
             // dispatch({"type": "UNAUTHENTICATED"});
         } 
-        if (state.userId) {
-          loadFromLocalStorage().then((parsedState) => {
-            if (parsedState) {
-              // save to server
-              saveToServer(parsedState).then((res) => {
-                localStorage.removeItem('cardgame');
-              }).catch((err) => {
-                console.error('Failed to save to server');
-              });
-              dispatch({ type: 'LOAD_STATE', payload: parsedState });
-            } else {
-              loadFromServer().then((firebaseState) => {
-                dispatch({ type: 'LOAD_STATE', payload: {...defaultState, ...firebaseState} });
-              }).catch((err) => {
-                console.error('Failed to load from server');
-              })
-            }
-            
-          });
-        }
       }
+
+      if (!state.isInitialized && state.isAuthed && state.userId) {
+        // try to load from localstorage first, to convert old local data to server data
+        // once this new code has been running for a while, we can strip the localstorage check
+        // 2025-02-07
+        loadFromLocalStorage().then((parsedState) => {
+          if (parsedState) {
+            // save to server
+            saveToServer(parsedState).then((res) => {
+              localStorage.removeItem('cardgame');
+            }).catch((err) => {
+              console.error('Failed to save to server');
+            });
+            dispatch({ type: 'LOAD_STATE', payload: parsedState });
+          } else {
+            // if there's no data in localstorage, try from server
+            loadFromServer().then((firebaseState) => {
+              dispatch({ type: 'LOAD_STATE', payload: {...defaultState, ...firebaseState} });
+            }).catch((err) => {
+              console.log(err);
+              console.error('Failed to load from server');
+            })
+          }
+        });
+      }
+
     }
+
     initialize();
     return () => {
       clearTimeout(timeout);
@@ -147,7 +153,12 @@ export async function loadFromServer () {
   const response = await fetch(`${firebaseFunctionsUrl}/loadBrainGymData/?userId=${userId}`);
   const data: FirebasePersistedState = await response.json();
   if (response.status !== 200) {
-    throw new Error('Failed to load from server');
+    if (response.status === 404) {
+      //no data present, return default state
+      return {...defaultState};
+    }
+    // all other errors
+    throw new Error();
   }
   return ({
     ...data,

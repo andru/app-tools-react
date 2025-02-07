@@ -42,6 +42,15 @@ export const prizes: Prize[] = [
   {id: 'third', minGames: 18, daysSinceLastPrize: 25, text: 'Get 20% off your next order using this coupon code!', code: 'BRAINTRAIN-NPAD20'}
 ] 
 
+export const TapCartMock = {
+  isInitialized: true,
+  variables: {
+    customer: {
+      id: '123'
+    }
+  }
+}
+
 // just used to render a dummy chart when there's not enough data
 export const dummyGames: Game[] = [
   {

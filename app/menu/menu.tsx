@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router';
-import { useVariables, useTapcart } from '~/webbridge-react/dist/webbridge-react.es';
+// import { useVariables, useTapcart } from '~/webbridge-react/dist/webbridge-react.es';
 
 export function Menu() {
 
   const [userError, setUserError] = useState<string | null>(null);
-  const { loaded, customer } = useVariables();
-  const { isInitialized } = useTapcart();
+  // const { loaded, customer } = useVariables();
+  // const { isInitialized } = useTapcart();
 
   useEffect(() => {
 
@@ -69,7 +69,7 @@ export function Menu() {
         {userError ? <div className="w-full p-5 bg-red-50 text-red-500 text-center">
         {userError}
       </div> : null}
-      <div className="w-full p-5 bg-red-50 text-red-500 text-center">{loaded} {isInitialized} {customer}</div>
+      {/* <div className="w-full p-5 bg-red-50 text-red-500 text-center">{loaded} {isInitialized} {customer}</div> */}
       </ul>
     </main>
   );
