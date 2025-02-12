@@ -135,7 +135,8 @@ export const reducer = (state: State, action: Action): State => {
         nextGame.matches = [...nextGame.matches, nextGame.cards[nextGame.currentTry[0]!] ];
       }
       // if all matches have been made, move to the next round
-      // a useEffect in the game component will dispatch a ROUND_COMPLETE action
+      // a useEffect in the game component will dispatch END_ROUND and START_ROUND actions
+      // this should really be a saga or thunk, but there's no time to refactor...
       if (nextGame.matches.length === nextGame.cards.length / 2) {
         nextGame.roundFinished = true;
       }
@@ -151,9 +152,9 @@ export const reducer = (state: State, action: Action): State => {
     case 'START_ROUND':
       // add score for the round which just finished
       nextGame.roundScores = [...state.currentGame.roundScores, {
-        cards: nextGame.cards.length,
-        moves: nextGame.movesCounter,
-        time: Math.floor((Date.now() - nextGame.gameStartTime!) / 1000),
+        cards: state.currentGame.cards.length,
+        moves: state.currentGame.movesCounter,
+        time: Math.floor((Date.now() - state.currentGame.roundStartTime!.getTime()) / 1000),
       }];
 
       if (state.currentGame.currentRound + 1 > state.currentGame.rounds.length) {
@@ -164,6 +165,9 @@ export const reducer = (state: State, action: Action): State => {
 
         // calculate win/lose
         const result = gameResult(state, {rounds: nextGame.roundScores, date: new Date()});
+        console.log('Game finished');
+        console.log('Result', result);
+        console.log('Round Scores', nextGame.roundScores);
         nextState.lastGameResult = result;
 
         // allow the user to play multiple games in a day, and keep the best score
@@ -172,14 +176,14 @@ export const reducer = (state: State, action: Action): State => {
 
         // if no score exists for today, add the game just played to state
         if (existingScore === -1) {
-          nextState.scores = [...nextState.scores, {
-            rounds: [...state.currentGame.roundScores],
+          nextState.scores = [...state.scores, {
+            rounds: [...nextGame.roundScores],
             date: new Date()
           }];
         } else {
           // if a score already exists for today, only update it if the new score is better
           if (calculateGameScore(state.scores[existingScore]) < result.score) {
-            nextState.scores = state.scores.map((score, index) => index === existingScore ? {...state.scores[existingScore]} : {...score});
+            nextState.scores = state.scores.map((score, index) => index === existingScore ? {...score, rounds: [...nextGame.roundScores]} : {...score});
           }
         }
 
