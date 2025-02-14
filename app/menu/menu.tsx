@@ -38,12 +38,7 @@ export function Menu() {
       window.clearInterval(tcInterval);
     }
 
-  })
-
-  useEffect(() => {
-
-    
-  });
+  }, [])
 
   return (
     <main className="h-full flex pt-4 pb-4 bg-gray-200">
