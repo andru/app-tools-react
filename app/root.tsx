@@ -5,11 +5,18 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "react-router";
 
 import type { Route } from "./+types/root";
 import "./app.css";
 import { useEffect, useState } from "react";
+
+const errorMessages: Record<string, string> = {
+  TC_NF: 'Failed to load user data. Not available.',
+  TC_NI: 'Failed to load user data. Not initialized.',
+  TC_USER_NF: 'Failed to load user data. User data not found.',
+}
 
 // import { loadWebbridge, WebbridgeProvider } from '~/webbridge-react/dist/webbridge-react.es'
 // const webbridgeClient = loadWebbridge({ test: false })
@@ -27,40 +34,60 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
+type LoaderData = {
+  tcCustomerId: string | undefined;
+  error: string | null;
+};
+
+export const routeId = "root"; // Add this export
+
 export function clientLoader() {
-
-  return new Promise<void | string>((resolve, reject) => {
-    // for some reason webbridge-ready never fires
-    // const tcListener = () => {
-    //   resolve();
-    //   window.removeEventListener("webbridge-ready", tcListener);
-    // };
-    // window.addEventListener("webbridge-ready", tcListener);
-
-    // so we're polling every 100ms instead...
-
+  return new Promise<LoaderData>((resolve, reject) => {
     const tcInterval = setInterval(() => {
       if (typeof Tapcart !== 'undefined') {
         const tc = Tapcart;
         if (tc.isInitialized) {
-          resolve(tc.variables?.customer?.id);
+          resolve({tcCustomerId: tc.variables?.customer?.id as string, error: null});
           clearInterval(tcInterval);
         }
       }
     }, 100);
+
+    const tcTimeout = setTimeout(() => {
+      clearInterval(tcInterval);
+      if (typeof Tapcart === 'undefined') {
+        resolve({ tcCustomerId: undefined, error: 'TC_NF' });
+      } else {
+        const tc = Tapcart;
+        if (!tc.isInitialized) {
+          resolve({ tcCustomerId: undefined, error: 'TC_NI' });
+        } else {
+          if (!tc.variables?.customer?.id) {
+            // if we have Tapcart, but no customer data, we need to reload the page
+            const reloaded = window.sessionStorage.get('tapcart-reload');
+            if (!reloaded || (Date.now() - parseInt(reloaded, 10)) > 1000 * 60) {
+              // if we haven't reloaded in the last 60 seconds, reload the page
+              window.sessionStorage.setItem('tapcart-reload', Date.now().toString());
+              // console.warn('Tapcart is initialized, but no customer data. Reloading page...');
+              window.location.reload();
+            }
+            resolve({ tcCustomerId: undefined, error: 'TC_USER_NF' });
+          }
+        }
+      }
+    }, 1000);
+
   });
+}
+
+export function HydrateFallback() {
+  return <div className="h-full flex items-center justify-center"><span className="animate-pulse">Loading...</span></div>;
 }
 
 
 export function Layout({ children }: { children: React.ReactNode }) {
 
-  const [tcInitialized, setTcInitialized] = useState<boolean>(false);
-
-  useEffect(() => {
-    clientLoader().then(() => {
-      setTcInitialized(true);
-    });
-  }, [])
+   const tcData = useLoaderData<typeof clientLoader>();
 
   return (
     <html lang="en">
@@ -74,11 +101,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {/* <WebbridgeProvider webbridgeClient={webbridgeClient}> */}
-          
-          {tcInitialized 
-            ? children 
-            : <div className="h-full flex items-center justify-center"><span className="animate-pulse">Loading...</span></div>
-          } 
+          {children}
+          {tcData?.error ? (
+            <div className="fixed bottom-0 right-0 left-0 w-full p-5 bg-red-50 text-red-500 text-center">
+              {errorMessages[tcData.error] ?? tcData.error}
+            </div>
+          ) : null}
           {/* </WebbridgeProvider> */}
         <ScrollRestoration />
         <Scripts />
