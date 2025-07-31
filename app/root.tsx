@@ -49,6 +49,7 @@ export function clientLoader() {
         if (tc.isInitialized) {
           resolve({tcCustomerId: tc.variables?.customer?.id as string, error: null});
           clearInterval(tcInterval);
+          clearTimeout(tcTimeout);
         }
       }
     }, 100);
@@ -64,18 +65,18 @@ export function clientLoader() {
         } else {
           if (!tc.variables?.customer?.id) {
             // if we have Tapcart, but no customer data, we need to reload the page
+            resolve({ tcCustomerId: undefined, error: 'TC_USER_NF' });
             const reloaded = window.sessionStorage.get('tapcart-reload');
             if (!reloaded || (Date.now() - parseInt(reloaded, 10)) > 1000 * 60) {
               // if we haven't reloaded in the last 60 seconds, reload the page
               window.sessionStorage.setItem('tapcart-reload', Date.now().toString());
               // console.warn('Tapcart is initialized, but no customer data. Reloading page...');
-              window.location.reload();
+              window.location.replace(`${window.location.href}?tapcart-reload=${Date.now()}`);
             }
-            resolve({ tcCustomerId: undefined, error: 'TC_USER_NF' });
           }
         }
       }
-    }, 1000);
+    }, 5000);
 
   });
 }
@@ -107,6 +108,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
               {errorMessages[tcData.error] ?? tcData.error}
             </div>
           ) : null}
+          {/* {tcData?.tcCustomerId ? (
+            <div className="fixed bottom-0 right-0 left-0 w-full p-5 bg-green-50 text-green-500 text-center">
+              TCID: {tcData.tcCustomerId}
+            </div>
+          ) : null} */}
           {/* </WebbridgeProvider> */}
         <ScrollRestoration />
         <Scripts />
